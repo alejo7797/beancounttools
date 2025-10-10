@@ -30,6 +30,8 @@ class MailAdapterImporter(Importer):
             for msg in mailbox.fetch():
                 processed = False
                 for att in msg.attachments:
+                    if not att.filename:
+                        continue
                     with tempfile.TemporaryDirectory() as tmpdirname:
                         attFileName = path.join(tmpdirname, att.filename)
                         with open(attFileName, "wb") as attFile:
