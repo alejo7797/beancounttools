@@ -26,7 +26,10 @@ class Source(source.Source):
         statement = parser.parse(response)
         for custStatement in statement.FlexStatements:
             for position in custStatement.OpenPositions:
-                if position.symbol.rstrip("z") == ticker:
+                symbol = position.symbol
+                symbol = symbol.rstrip("z")
+                symbol, _, _ = symbol.partition(".")
+                if symbol == ticker:
                     price = D(position.markPrice)
                     timezone = tz.gettz("Europe/Zurich")
                     time = datetime.combine(

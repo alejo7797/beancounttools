@@ -36,7 +36,7 @@ class Importer(beangulp.Importer):
 
         return (
             t["date"] == trx.dateTime
-            and t["symbol"] == trx.symbol
+            and t["symbol"] == self.cleanupSymbol(trx.symbol)
             and trxPerShare == tPerShare
             and t["account"] == account
         )
@@ -62,7 +62,7 @@ class Importer(beangulp.Importer):
                     self.createBuy(
                         trx.tradeDate,
                         account,
-                        trx.symbol.rstrip("z"),
+                        self.cleanupSymbol(trx.symbol),
                         trx.quantity,
                         trx.currency,
                         trx.tradePrice,
@@ -105,7 +105,7 @@ class Importer(beangulp.Importer):
                     transactions.append(
                         {
                             "date": trx.dateTime,
-                            "symbol": trx.symbol,
+                            "symbol": self.cleanupSymbol(trx.symbol),
                             "currency": trx.currency,
                             "amount": amt,
                             "whAmount": whAmount,
@@ -117,7 +117,7 @@ class Importer(beangulp.Importer):
 
             for trx in transactions:
                 if trx["type"] == CashAction.DIVIDEND:
-                    asset = trx["symbol"].rstrip("z")
+                    asset = trx["symbol"]
                     payDate = trx["date"].date()
                     totalDividend = trx["amount"]
                     totalWithholding = -trx["whAmount"]
@@ -255,3 +255,10 @@ class Importer(beangulp.Importer):
 
     def getFeeAccount(self, account: str) -> data.Account:
         return f"Expenses:{account}:Fees"
+
+    def cleanupSymbol(self, symbol: str) -> str:
+        result = symbol
+        result = result.rstrip("z")
+        result, _, _ = result.partition(".")
+
+        return result
