@@ -4,7 +4,7 @@ from time import sleep
 from typing import override
 
 from beancount.core.number import D
-from beanprice import source
+from beanprice import source  # pyright: ignore[reportMissingTypeStubs]
 from dateutil import tz
 from ibflex import FlexQueryResponse, OpenPosition, client, parser
 
@@ -23,7 +23,7 @@ class Source(source.Source):
             else:
                 raise e
 
-        return parser.parse(response)
+        return parser.parse(response)  # pyright: ignore[reportUnknownMemberType]
 
     def _handle_position(
         self, position: OpenPosition, ticker: str, time: datetime | None = None
